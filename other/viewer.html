@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <title>Children and Young People having a Disability</title>
+    </head>
+    <body>
+        <h1>Children and Young People having a Disability</h1>
+        <div><button>Create new data</button><br/><br/></div>
+        <div>
+            <table border="1">
+                <tr>                       
+                        <th>Year</th>                       
+                        <th>Age Group</th>
+                        <th>County</th> 
+                        <th>Sex</th>
+                        <th>Severity of Disability</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                <tr>
+                    <td>2014</td>
+                    <td>0-4</td>
+                    <td>All Counties</td>
+                    <td>Female</td>
+                    <td>Intelektual</td> 
+                    <td><button>Update</button></td>
+                    <td><button>Delete</button></td>
+                   
+            </tr>
+
+        </table>
+        <br/>
+        </div>
+        <div>
+            <!-- spans are like divs but do not go onto a new line -->
+            <h2><span>Create new</span> <span style="display:none">Update</span> Data</h2>
+            Year <input type="number" name="Year"><br/>            
+            Age Group <select name="Age Group">
+                <option value="0_4_years">0 - 4 years</option>
+                <option value="0_17_years">0 - 17 years</option>
+                <option value="0_24_years">0 - 24 years</option>
+                <option value="5_9_years">5 - 9 years</option>
+                <option value="10_14_years">10 - 14 years</option>
+                <option value="15_17_years">15 - 17 years</option>
+                <option value="18_24_years">18 - 24 years</option>
+            </select><br/>
+            County <select name="County">
+                <option value="all_counties">All Counties</option>
+                <option value="antrim">Antrim</option>
+                <option value="armagh">Armagh</option>
+                <option value="carlow">Carlow</option>
+                <option value="cavan">Cavan</option>
+                <option value="clare">Clare</option>
+                <option value="cork">Cork</option>
+                <option value="derry">Derry</option>
+                <option value="donegal">Donegal</option>
+                <option value="down">Down</option>
+                <option value="dublin">Dublin</option>
+                <option value="fermanagh">Fermanagh</option>
+                <option value="galway">Galway</option>
+                <option value="kerry">Kerry</option>
+                <option value="kilkenny">Kilkenny</option>
+                <option value="kildare">Kildare</option>               
+                <option value="laois">Laois</option>
+                <option value="leitrim">Leitrim</option>
+                <option value="limerick">Limerick</option>
+                <option value="longford">Longford</option>
+                <option value="louth">Louth</option>
+                <option value="mayo">Mayo</option>
+                <option value="meath">Meath</option>
+                <option value="monaghan">Monaghan</option>
+                <option value="offaly">Offaly</option>
+                <option value="roscommon">Roscommon</option>
+                <option value="sligo">Sligo</option>
+                <option value="tipperary">Tipperary</option>
+                <option value="tyrone">Tyrone</option>
+                <option value="waterford">Waterford</option>
+                <option value="westmeath">Westmeath</option>
+                <option value="wexford">Wexford</option>
+                <option value="wicklow">Wicklow</option>   
+                <option value="non_residents">Non-residents</option>
+            </select><br/>
+            Sex <select name="Sex">
+                <option value="both_sexes">Both sexes</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select><br/>
+            Severity of Disability <input type="number" name="Sev_of_Disability"><br/>
+            <span><button>Create</button></span>
+ 			<span><button style="display:none">Update</button></span>
+             <!-- "display:none" will make it hidden-->
+
+
+        </div>
+        
+    </body>
+</html>
