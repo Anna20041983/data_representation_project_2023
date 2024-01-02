@@ -66,25 +66,29 @@
                 };
             }
                 // Fetch and process the first dataset
-                var dataset1 = "SCA06";
-                var cso_data1 = getFormatted(dataset1);
-                displayDataInTable(cso_data1, "combinedDataTable");
+                let dataset1 = "SCA06";
+                let cso_data1 = getFormatted(dataset1);
+         
     
                 // Fetch and process the second dataset
-                var dataset2 = "SCA05";  // Replace with the name of your second dataset
-                var cso_data2 = getFormatted(dataset2);
-                displayDataInTable(cso_data2, "combinedDataTable");
+                let dataset2 = "SCA05";  // Replace with the name of your second dataset
+                let cso_data2 = getFormatted(dataset2);
+
+                // Merge datasets into a single data structure
+                let cso_data = [].concat(cso_data1, cso_data2);
+
+                displayDataInTable(cso_data, "combinedDataTable");
     
-                cso_data = cso_data1 + cso_data2
+                
 
 
                 function displayDataInTable(cso_data, tableId) {
-                    var tableElement = document.getElementById(tableId);
+                    let tableElement = document.getElementById(tableId);
     
                     // Add data to the table
-                    for (var type_of_disability in cso_data) {
-                        for (var severity_of_disability in cso_data[type_of_disability]) {
-                            var rowElement = tableElement.insertRow(-1);
+                    for (let type_of_disability in cso_data) {
+                        for (let severity_of_disability in cso_data[type_of_disability]) {
+                            let rowElement = tableElement.insertRow(-1);
 
                             rowElement.setAttribute('id',cso_data.year)
     
@@ -191,7 +195,7 @@
         </div>        
     </body>
     <script>
-        //console.log("hello world")
+        console.log("hello world")
 
         function showCreate(){
             document.getElementById("createUpdateForm").style.display = "block"
@@ -220,8 +224,8 @@
             var rowElement;
             rowElement= buttonElement.parentNode.parentNode
             cso_data = getDataFromRow(rowElement)
-            //console.log("updating")
-            //console.log(book)
+            console.log("updating")
+            console.log(cso_data)
             populateFormWithData(cso_data)
             
         }
@@ -255,7 +259,7 @@
         	cso_data.sex = form.querySelector('select[name="sex"]').value
             cso_data.type_of_disability = form.querySelector('select[name="type_of_disability"]').value
             cso_data.no_of_children = form.querySelector('input[name="no_of_children"]').value
-        	//console.log(JSON.stringify(book))
+        	console.log(JSON.stringify(cso_data))
             return cso_data
         }
         function populateFormWithData(cso_data){
@@ -271,8 +275,14 @@
 
 
         function addDataToTable(cso_data){
-            var tableElement = document.getElementById('combinedDataTable')
-            var rowElement = tableElement.insertRow(-1)
+            let tableElement = document.getElementById('combinedDataTable')
+            // Check if data with the same identifier (year) already exists
+            let existingRow = document.getElementById(cso_data.year);
+            if (existingRow) {
+                console.log(`Data for year ${cso_data.year} already exists. Skipping insertion.`);
+                return;
+            }
+            let rowElement = tableElement.insertRow(-1)
             
             rowElement.setAttribute('id',cso_data.year)
             
@@ -323,7 +333,7 @@
         }
         function doUpdate(){
             var cso_data= getDataFromForm()
-            //console.log(book)
+            console.log(cso_data)
             var rowElement = document.getElementById(cso_data.year)
             setDataInRow(rowElement, cso_data)
 
@@ -341,80 +351,96 @@
 
         }
 
-        function getAllAjax(){
-            $.ajax({
-                "url": "http://127.0.0.1:5000/cso_data",
-                "method":"GET",
-                "data":"",
-                "dataType": "JSON",
-                "success":function(result){
-                    //console.log(result);
-                    for (cso_data of result){
-                        addDataToTable(cso_data);
+            function getAllAjax() {
+            try {
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/cso_data",
+                    "method": "GET",
+                    "dataType": "JSON",
+                    "success": function (result) {
+                        console.log(result);
+                        for (cso_data of result) {
+                            addDataToTable(cso_data);
+                        }
+                    },
+                    "error": function (xhr, status, error) {
+                        console.error("Error fetching data: " + status + " - " + error);
                     }
-                    
-                },
-                "error":function(xhr,status,error){
-                    console.log("error: "+status+" msg:"+error);
-                }
-            });
-    
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
         }
-        function createDataAjax(cso_data){
-            console.log(JSON.stringify(cso_data));
-            $.ajax({
-                "url": "http://127.0.0.1:5000/cso_data",
-                "method":"POST",
-                "data":JSON.stringify(cso_data),
-                "dataType": "JSON",
-                contentType: "application/json; charset=utf-8",
-                "success":function(result){
-                    //console.log(result);
-                    cso_data.year = result.year
-                    addDataToTable(cso_data)
-                    clearForm()
-                    showViewAll()
-                },
-                "error":function(xhr,status,error){
-                    console.log("error: "+status+" msg:"+error);
-                }
-            });
+
+        function createDataAjax(cso_data) {
+            try {
+                console.log(JSON.stringify(cso_data));
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/cso_data",
+                    "method": "POST",
+                    "data": JSON.stringify(cso_data),
+                    "dataType": "JSON",
+                    contentType: "application/json; charset=utf-8",
+                    "success": function (result) {
+                        console.log(result);
+                        cso_data.year = result.year;
+                        addDataToTable(cso_data);
+                        clearForm();
+                        showViewAll();
+                    },
+                    "error": function (xhr, status, error) {
+                        console.error("Error creating data: " + status + " - " + error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
         }
         function updateDataAjax(cso_data){
-            console.log(JSON.stringify(cso_data));
-            $.ajax({
-                "url": "http://127.0.0.1:5000/cso_data/"+encodeURI(cso_data.year),
-                "method":"PUT",
-                "data":JSON.stringify(cso_data),
-                "dataType": "JSON",
-                contentType: "application/json; charset=utf-8",
-                "success":function(result){
-                   // console.log(result);
+            try {
+                console.log(JSON.stringify(cso_data));
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/cso_data/"+encodeURI(cso_data.year),
+                    "method":"PUT",
+                    "data":JSON.stringify(cso_data),
+                    "dataType": "JSON",
+                    contentType: "application/json; charset=utf-8",
+                    "success":function(result){
+                    console.log(result);
                       
-                },
-                "error":function(xhr,status,error){
-                    console.log("error: "+status+" msg:"+error);
-                }
-            });
+                    },
+                    "error":function(xhr,status,error){
+                        console.log("error: "+status+" msg:"+error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
         }
+
         function deleteDataAjax(year){
+            try {
             
-            //console.log(JSON.stringify('deleting '+id));
-            $.ajax({
-                "url": "http://127.0.0.1:5000/cso_data/"+encodeURI(year),
-                "method":"DELETE",
-                "data":"",
-                "dataType": "JSON",
-                contentType: "application/json; charset=utf-8",
-                "success":function(result){
-                    //console.log(result);
+                console.log(JSON.stringify('deleting '+year));
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/cso_data/"+encodeURI(year),
+                    "method":"DELETE",
+                    "data":"",
+                    "dataType": "JSON",
+                    contentType: "application/json; charset=utf-8",
+                    "success":function(result){
+                        console.log(result);
                       
-                },
-                "error":function(xhr,status,error){
-                    console.log("error: "+status+" msg:"+error);
-                }
-            });
+                    },
+                    "error":function(xhr,status,error){
+                        console.log("error: "+status+" msg:"+error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
         }
+        
         getAllAjax();
 
     </script>

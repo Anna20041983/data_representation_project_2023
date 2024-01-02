@@ -46,12 +46,12 @@ class PhysicalDAO:
     def getAll(self):
         cursor = self.getcursor()
         sql="select * from physical"
-        cursor.execute(sql, db_values)
+        cursor.execute(sql)
         results = cursor.fetchall()
         returnArray = []
-        print(results)
+        #print(results)
         for result in results:
-            print(result)
+            #print(result)
             returnArray.append(self.convertToDictionary(result))
         
         self.closeAll()

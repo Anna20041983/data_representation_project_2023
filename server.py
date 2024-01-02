@@ -9,17 +9,26 @@ app = Flask(__name__, static_url_path='', static_folder='.')
 class CombinedDAO:
     @staticmethod
     def getAll():
-        # Combine results from both DAOs
-        results = disabilityDAO.getAll() + physicalDAO.getAll()
-        return results
+        disability_data = disabilityDAO.getAll()
+        physical_data = physicalDAO.getAll()
 
-    def findByYear(year):
+        # Assuming both disability and physical data have the same structure
+        results = disability_data + physical_data
+        return results
+    
+    #import pdb; pdb.set_trace()
+
+    @staticmethod
+    def findByYear(self, year):
         foundData = disabilityDAO.findByYear(year) + physicalDAO.findByYear(year)
 
         return jsonify(foundData)
     # Other methods (findByYear, create, update, delete) go here...
 
-    def create():
+    #import pdb; pdb.set_trace()
+
+    @staticmethod
+    def create(self):
 
         cso_data = {
             "year": request.json['year'],
@@ -34,9 +43,12 @@ class CombinedDAO:
         cso_data['year'] = newId
         return jsonify(cso_data)
 
-    def update(year):
-        foundBook1 = physicalDAO.findByYear(year)
-        if not foundData1:
+    #import pdb; pdb.set_trace()
+
+    @staticmethod
+    def updatePhysical(self, year):
+        foundData = physicalDAO.findByYear(year)
+        if not foundData:
             abort(404)
     
         if not request.json:
@@ -44,21 +56,24 @@ class CombinedDAO:
         reqJson = request.json
 
         if 'Year' in reqJson:
-            foundData1['year'] = reqJson['year']
+            foundData['year'] = reqJson['year']
         if 'Age Group' in reqJson:
-            foundData1['age_group'] = reqJson['age_group']
+            foundData['age_group'] = reqJson['age_group']
         if 'County' in reqJson:
-            foundData1['county'] = reqJson['county']
+            foundData['county'] = reqJson['county']
         if 'Sex' in reqJson:
-            foundData1['sex'] = reqJson['sex']
+            foundData['sex'] = reqJson['sex']
         if 'Type of Disability' in reqJson:
-            foundData1['type_of_disability'] = reqJson['type_of_disability']
-        values1 = (foundData1['year'],foundData1['age_group'],foundData1['county'],foundData1['sex'],foundData1['type_of_disability'],foundData1['no_of_children'])
-        physicalDAO.update(values1)
-        return jsonify(foundData1)
+            foundData['type_of_disability'] = reqJson['type_of_disability']
+        values = (foundData['year'],foundData['age_group'],foundData['county'],foundData['sex'],foundData['type_of_disability'],foundData['no_of_children'])
+        physicalDAO.update(values)
+        return jsonify(foundData)
+    #import pdb; pdb.set_trace()
 
-        foundBook2 = disabilityDAO.findByYear(year)
-        if not foundData2:
+    @staticmethod
+    def updateDisability(self, year):
+        foundData = disabilityDAO.findByYear(year)
+        if not foundData:
             abort(404)
     
         if not request.json:
@@ -66,41 +81,54 @@ class CombinedDAO:
         reqJson = request.json
 
         if 'Year' in reqJson:
-            foundData2['year'] = reqJson['year']
+            foundData['year'] = reqJson['year']
         if 'Age Group' in reqJson:
-            foundData2['age_group'] = reqJson['age_group']
+            foundData['age_group'] = reqJson['age_group']
         if 'County' in reqJson:
-            foundData2['county'] = reqJson['county']
+            foundData['county'] = reqJson['county']
         if 'Sex' in reqJson:
-            foundData2['sex'] = reqJson['sex']
+            foundData['sex'] = reqJson['sex']
         if 'Severity of Disability' in reqJson:
-            foundData2['severity_of_disability'] = reqJson['severity_of_disability']
-        values2 = (foundData2['year'],foundData2['age_group'],foundData2['county'],foundData2['sex'],foundData2['severity_of_disability'],foundData2['no_of_children'])
-        disabilityDAO.update(values2)
-        return jsonify(foundData2)
+            foundData['severity_of_disability'] = reqJson['severity_of_disability']
+        values = (foundData['year'],foundData['age_group'],foundData['county'],foundData['sex'],foundData['severity_of_disability'],foundData['no_of_children'])
+        disabilityDAO.update(values)
+        return jsonify(foundData)
 
         foundData = foundData1 + foundData2
+    #import pdb; pdb.set_trace()
+
+    @staticmethod
+    def update(self, year):
+        # Choose which DAO to update based on some condition, e.g., type_of_data
+        if request.json.get('type_of_data') == 'disability':
+            return self.updateDisability(year)
+        elif request.json.get('type_of_data') == 'physical':
+            return self.updatePhysical(year)
+        else:
+            abort(400)
+    #import pdb; pdb.set_trace()
 
     def delete(year):
         disabilityDAO.delete(year)
         physicalDAO.delete(year)
         return jsonify({"done":True})
+    #import pdb; pdb.set_trace()
 
 
 #curl "http://127.0.0.1:5000/books"
 @app.route('/cso_data')
 def getAll():
-    #print("in getall")
-    results = CombinedDAO.getAll()
-    return jsonify(results)
 
+    results = CombinedDAO.getAll()
+    return results
+    #import pdb; pdb.set_trace()
 #curl "http://127.0.0.1:5000/books/2"
 @app.route('/cso_data/<int:year>')
 def findByYear(year):
     foundData = CombinedDAO.findByYear(year)
 
-    return jsonify(foundData)
-
+    return foundData
+    #import pdb; pdb.set_trace()
 #curl  -i -H "Content-Type:application/json" -X POST -d "{\"title\":\"hello\",\"author\":\"someone\",\"price\":123}" http://127.0.0.1:5000/books
 @app.route('/cso_data', methods=['POST'])
 def create():
@@ -113,18 +141,19 @@ def create():
         "age_group": request.json['age_group'],
         "county": request.json['county'],
         "sex": request.json['sex'],
-        "type_of_disability": request.json['type_of_disability']['severity_of_disability'],
+        "type_of_disability": request.json['type_of_disability'],
         "no_of_children": request.json['no_of_children'],
     }
-    values =(cso_data['year'],cso_data['age_group'],cso_data['county'],cso_data['sex'],cso_data['type_of_disability']['severity_of_disability'],cso_data['no_of_children'])
+    values =(cso_data['year'],cso_data['age_group'],cso_data['county'],cso_data['sex'],cso_data['type_of_disability'],cso_data['no_of_children'])
     newId = CombinedDAO.create(values)
     cso_data['year'] = newId
     return jsonify(cso_data)
+    #import pdb; pdb.set_trace()
 
 #curl  -i -H "Content-Type:application/json" -X PUT -d "{\"title\":\"hello\",\"author\":\"someone\",\"price\":123}" http://127.0.0.1:5000/books/1
 @app.route('/cso_data/<int:year>', methods=['PUT'])
 def update(year):
-    foundBook = CombinedDAO.findByYear(year)
+    foundData = CombinedDAO.update(year)
     if not foundData:
         abort(404)
     
@@ -143,12 +172,12 @@ def update(year):
     if 'Sex' in reqJson:
         foundData['sex'] = reqJson['sex']
     if 'Type of Disability' in reqJson:
-        foundData['type_of_disability'] = reqJson['type_of_disability']['severity_of_disability']
-    values = (foundData['year'],foundData['age_group'],foundData['county'],foundData['sex'],foundData['type_of_disability']['severity_of_disability'],foundData['no_of_children'])
+        foundData['type_of_disability'] = reqJson['type_of_disability']
+    values = (foundData['year'],foundData['age_group'],foundData['county'],foundData['sex'],foundData['type_of_disability'],foundData['no_of_children'])
     CombinedDAO.update(values)
     
     return jsonify(foundData)
-        
+    #import pdb; pdb.set_trace() 
 
     
 
@@ -157,7 +186,7 @@ def delete(year):
     CombinedDAO.delete(year)
     
     return jsonify({"done":True})
-
+    import pdb; pdb.set_trace()
 
 
 
