@@ -67,7 +67,6 @@ def getFormatted(dataset):
                             index = dimensions[currentId]["category"]["index"][dim5]
                             label5 = dimensions[currentId]["category"]["label"][index]
                             result[label0][label1][label2][label3][label4][label5]  = values[valueCount]
-                            db_values = (label1, label2, label3, label4, label5, values[valueCount])
          
                             valueCount += 1
 
