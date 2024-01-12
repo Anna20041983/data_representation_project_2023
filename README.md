@@ -17,7 +17,7 @@ Big Project for Data Representation Module
     - dbconfig.py file
     - requirements.txt
     - templates folder, which runs this application from the client perspective
-        - client login page
+        - client login page - {'username': 'demo', 'password': 'password'}
         - client main page to perform CRUD operations
         - client failed login page
 
