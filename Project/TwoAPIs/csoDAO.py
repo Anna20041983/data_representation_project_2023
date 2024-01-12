@@ -7,17 +7,16 @@ urlBeginning = "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDa
 urlEnd = "/JSON-stat/2.0/en"
 
 def getAllAsFile(dataset):
-     with open("cso.json", "wt") as fp:
+    with open(f"{dataset}.json", "wt") as fp:
         print(json.dumps(getAll(dataset)), file=fp)
 
 def getAll(dataset):
     url = urlBeginning + dataset + urlEnd
     response = requests.get(url)
-   
     return response.json()
 
 def getFormattedAsFile(dataset):
-    with open("cso-formatted.json", "wt") as fp:
+    with open(f"{dataset}-formatted.json", "wt") as fp:
         print(json.dumps(getFormatted(dataset)), file=fp)
 
 def getFormatted(dataset):
@@ -52,11 +51,16 @@ def getFormatted(dataset):
                     index = dimensions[currentId]["category"]["index"][dim3]
                     label3 = dimensions[currentId]["category"]["label"][index]
                     result[label0][label1][label2][label3] = values[valueCount]
-         
+
                     valueCount += 1
 
     return result
 
+def fetchAndStoreData(dataset):
+    getAllAsFile(dataset)
+    getFormattedAsFile(dataset)
+
 if __name__ == "__main__":
-    getFormattedAsFile("HIS51")
-    
+    datasets = ["HIS51", "HIS53"] 
+    for dataset in datasets:
+        fetchAndStoreData(dataset)

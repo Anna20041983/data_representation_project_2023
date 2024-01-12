@@ -3,6 +3,9 @@ import requests
 import json
 from dataDAO import dataDAO
 
+
+#url = "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SCA05/JSON-stat/2.0/en"
+#url = "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/SCA06/JSON-stat/2.0/en"
 urlBeginning = "https://ws.cso.ie/public/api.restful/PxStat.Data.Cube_API.ReadDataset/"
 urlEnd = "/JSON-stat/2.0/en"
 
@@ -52,10 +55,14 @@ def getFormatted(dataset):
                     index = dimensions[currentId]["category"]["index"][dim3]
                     label3 = dimensions[currentId]["category"]["label"][index]
                     result[label0][label1][label2][label3] = values[valueCount]
+
+
          
                     valueCount += 1
 
     return result
+
+
 
 if __name__ == "__main__":
     getFormattedAsFile("HIS51")

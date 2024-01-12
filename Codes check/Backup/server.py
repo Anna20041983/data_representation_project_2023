@@ -1,47 +1,13 @@
-from flask import Flask, render_template, jsonify, request, abort, redirect, url_for, session
+from flask import Flask, render_template, jsonify, request, abort
 from flask_cors import CORS
 from dataDAO import dataDAO
 
 app = Flask(__name__, template_folder='templates', static_url_path='', static_folder='.')
 CORS(app)  # Enable CORS for all routes
 
-app.secret_key = 'your_secret_key'  # Replace with a secure secret key
-
-# Dummy user for demonstration purposes
-dummy_user = {'username': 'demo', 'password': 'password'}
-
 @app.route('/')
 def index():
-    if 'username' in session:
-        return render_template('index.html', username=session['username'])
-    else:
-        # Redirect to login page if not logged in
-        return redirect(url_for('login'))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        if username == dummy_user['username'] and password == dummy_user['password']:
-            session['username'] = username
-            return redirect(url_for('index'))
-        else:
-            # Redirect to the failed page on incorrect login
-            return redirect(url_for('failed'))
-
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return redirect(url_for('login'))
-
-# Failed login route
-@app.route('/failed')
-def failed():
-    return render_template('failed.html')
+    return render_template('dataviewer.html')
 
 ## Correct usage
 @app.route('/cso_data')

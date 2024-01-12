@@ -29,29 +29,26 @@
                     <th scope="col">Year</th>
                     <th scope="col">Sex</th>
                     <th scope="col">Age Group</th>
-                    <th scope="col">Average Height (in centimetres)</th> 
-                    <!--<th scope="col">Type/Severity of Disability</th>
-                    <th scope="col">No of Children and Young People with disability</th>-->  
+                    <th scope="col">Average Height (in Centimetres)</th> 
+                    <th scope="col">Average Weight (in Kilograms)</th>
                     <th scope="col">Update</th>
                     <th scope="col">Delete</th>
                 </tr>
-                <tr id="1">
+                <tr class="data-row" data-id="1">
                     <td>2015</td>
                     <td>Male</td>
                     <td>20 - 24 years</td>
                     <td>177.3</td>
-                    <!--<td>All disabilities</td>
-                    <td>0</td>-->
+                    <td>78.3</td>
                     <td><button onclick="showUpdate(this)" class="btn btn-outline-warning">Update</button></td>
                     <td><button onclick="doDelete(this)" class="btn btn-outline-danger">Delete</button></td>                  
                 </tr>
-                <tr id="2">
+                <tr class="data-row" data-id="2">
                     <td>2015</td>
                     <td>Female</td>
                     <td>60 - 64 years</td>
                     <td>166.2</td>
-                    <!--<td>Physical disability</td>
-                    <td>12</td>-->
+                    <td>58.2</td>
                     <td><button onclick="showUpdate(this)" class="btn btn-outline-warning">Update</button></td>
                     <td><button onclick="doDelete(this)" class="btn btn-outline-danger">Delete</button></td>                  
                 </tr>
@@ -108,23 +105,7 @@
                     </select>
                 </div>
             </div>
-            <!--<div class="mb-3 row flex-wrap-reverse">
-                <div class="col-sm-5 align-self-stretch">
-                    <label for="selectDisability" class="col-form-label">Type/Severity of Disability</label>
-                </div>
-                <div class="col-sm-4">
-                    <select id="selectDisability" class="custom-select form-control" name="type_of_disability">
-                        <option value="All disabilities">All disabilities</option>
-                        <option value="Physical disability">Physical disability</option>
-                        <option value="Neurological disability">Neurological disability</option>
-                        <option value="Hearing loss/deafness disability">Hearing loss/deafness disability</option>
-                        <option value="Visual disability">Visual disability</option>
-                        <option value="Speech and language disability">Speech and language disability</option>
-                        <option value="Multiple disability">Multiple disability</option>
-                        <option value="Deaf/blind (dual sensory)">Deaf/blind (dual sensory)</option>
-                    </select>
-                </div>
-            </div> -->           
+        
             <div class="row mb-3 align-items-center">
                 <div class="col-sm-5 align-center">
                     <label for="height" class="form-label">Average Height</label>
@@ -135,14 +116,24 @@
                         <label for="inputNumber"><i>Type average height in cm's</i></label>
                     </div>
                 </div>
-            </div><br>           
+            </div>
+            <div class="row mb-3 align-items-center">
+                <div class="col-sm-5 align-center">
+                    <label for="weight" class="form-label">Average Weight</label>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-floating">
+                        <input type="weight" id="inputNumber" class="form-control" name="average_weight" placeholder="Type weight in kg's">
+                        <label for="inputNumber"><i>Type average weight in kg's</i></label>
+                    </div>
+                </div>
+            </div><br>             
             <span><button id="button-doCreate" class="btn btn-primary" onclick="doCreate()">Create</button></span>
  			<span><button id="button-doUpdate" class="btn btn-info" onclick="doUpdate()">Update</button></span>
              <!-- "display:none" will make it hidden-->
         </div>        
     </body>
     <script>
-        //var successMessage = "Data added successfully!";  // Define successMessage
         console.log("hello world")
         function showCreate(){
             document.getElementById("createUpdateForm").style.display = "block"
@@ -170,7 +161,7 @@
             rowElement= buttonElement.parentNode.parentNode
             cso_data = getDataFromRow(rowElement)
             console.log("updating")
-            //console.log(book)
+  
             populateFormWithData(cso_data)
             
         }
@@ -189,8 +180,7 @@
             form.querySelector('select[name="sex"]').value=''
             form.querySelector('select[name="age_group"]').value=''
             form.querySelector('input[name="average_height"]').value=''
-            //form.querySelector('select[name="type_of_disability"]').value=''
-            //form.querySelector('input[name="no_of_children"]').value=''
+            form.querySelector('input[name="average_weight"]').value=''
         }
         
         function getDataFromForm(){
@@ -201,8 +191,7 @@
         	cso_data.sex = form.querySelector('select[name="sex"]').value
         	cso_data.age_group = form.querySelector('select[name="age_group"]').value
         	cso_data.average_height = form.querySelector('input[name="average_height"]').value
-            //cso_data.type_of_disability = form.querySelector('select[name="type_of_disability"]').value
-            //cso_data.no_of_children = form.querySelector('input[name="no_of_children"]').value
+            cso_data.average_weight = form.querySelector('input[name="average_weight"]').value
         	console.log(JSON.stringify(cso_data))
             return cso_data
         }
@@ -213,8 +202,8 @@
        		form.querySelector('select[name="sex"]').value= cso_data.sex
             form.querySelector('select[name="age_group"]').value= cso_data.age_group
         	form.querySelector('input[name="average_height"]').value= cso_data.average_height
-            //form.querySelector('select[name="type_of_disability"]').value= cso_data.type_of_disability
-            //form.querySelector('input[name="no_of_children"]').value= cso_data.no_of_children
+            form.querySelector('input[name="average_weight"]').value= cso_data.average_weight
+            
     }
 
 
@@ -232,33 +221,42 @@
             cell3.innerHTML = cso_data.age_group
             var cell4 = rowElement.insertCell(3);
             cell4.innerHTML = cso_data.average_height
-            //var cell5 = rowElement.insertCell(4);
-            //cell5.innerHTML = cso_data.type_of_disability
-            //var cell6 = rowElement.insertCell(5);
-            //cell6.innerHTML = cso_data.no_of_children
             var cell5 = rowElement.insertCell(4);
-            cell5.innerHTML = '<button onclick="showUpdate(this) "class="btn btn-outline-warning">Update</button>'
+            cell5.innerHTML = cso_data.average_weight
             var cell6 = rowElement.insertCell(5);
-            cell6.innerHTML = '<button onclick=doDelete(this) class="btn btn-outline-danger">Delete</button>'
+            cell6.innerHTML = '<button onclick="showUpdate(this) "class="btn btn-outline-warning">Update</button>'
+            var cell7 = rowElement.insertCell(6);
+            cell7.innerHTML = '<button onclick=doDelete(this) class="btn btn-outline-danger">Delete</button>'
 
         }
-        function getDataFromRow(rowElement){
-            var cso_data ={}
-            cso_data.year  = rowElement.cells[0].firstChild.textContent
-            cso_data.sex = rowElement.cells[1].firstChild.textContent
-            cso_data.age_group = rowElement.cells[2].firstChild.textContent
-            cso_data.average_height = rowElement.cells[3].firstChild.textContent
-            //cso_data.type_of_disability = rowElement.cells[4].firstChild.textContent
-            //cso_data.no_of_children = rowElement.cells[5].firstChild.textContent
-            return cso_data
+        function getDataFromRow(rowElement) {
+            var cso_data = {};
+
+            // Check if the cells array exists
+            if (rowElement.cells && rowElement.cells.length >= 5) {
+                // Access properties only if they exist
+                cso_data.year = rowElement.cells[0].firstChild ? rowElement.cells[0].firstChild.textContent : null;
+                cso_data.sex = rowElement.cells[1].firstChild ? rowElement.cells[1].firstChild.textContent : null;
+                cso_data.age_group = rowElement.cells[2].firstChild ? rowElement.cells[2].firstChild.textContent : null;
+                cso_data.average_height = rowElement.cells[3].firstChild ? rowElement.cells[3].firstChild.textContent : null;
+                cso_data.average_weight = rowElement.cells[4].firstChild ? rowElement.cells[4].firstChild.textContent : null;
+            } else {
+                console.error("Invalid rowElement or cells array");
+            }
+
+            return cso_data;
         }
-        function setDataInRow(rowElement, cso_data){
-            rowElement.cells[0].firstChild.textContent= cso_data.year 
-            rowElement.cells[1].firstChild.textContent= cso_data.sex
-            rowElement.cells[2].firstChild.textContent= cso_data.age_group
-            rowElement.cells[3].firstChild.textContent= cso_data.average_height
-            //rowElement.cells[4].firstChild.textContent= cso_data.type_of_disability
-            //rowElement.cells[5].firstChild.textContent= cso_data.no_of_children
+
+        function setDataInRow(rowElement, cso_data) {
+            if (rowElement) {
+                rowElement.cells[0].firstChild.textContent = cso_data.year;
+                rowElement.cells[1].firstChild.textContent = cso_data.sex;
+                rowElement.cells[2].firstChild.textContent = cso_data.age_group;
+                rowElement.cells[3].firstChild.textContent = cso_data.average_height;
+                rowElement.cells[4].firstChild.textContent = cso_data.average_weight;
+            } else {
+                console.error('Error: Row element is null.');
+            }
         }
 
         // Function to display messages
@@ -343,6 +341,20 @@
                     },
                     "error": function (xhr, status, error) {
                         console.error("Error fetching data: " + status + " - " + error);
+                    }
+                });
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/cso_data_weight",
+                    "method": "GET",
+                    "dataType": "JSON",
+                    "success": function (result) {
+                        console.log(result);
+                        for (cso_data of result) {
+                            addDataToTable(cso_data, true);
+                        }
+                    },
+                    "error": function (xhr, status, error) {
+                        console.error("Error fetching weight data: " + status + " - " + error);
                     }
                 });
             } catch (e) {
