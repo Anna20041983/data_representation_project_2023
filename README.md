@@ -8,6 +8,7 @@ Big Project for Data Representation Module
 
 ## A list of items in this repository in a Project Folder:
 1. OneAPI Folder
+
 *This folder includes the below files & folders:*
     - csaDAO.py file - to get the dataset from CSO website and save it as a JSON file
     - dataDAO.py file - database sql queries
@@ -20,9 +21,11 @@ Big Project for Data Representation Module
         - client failed login page
 
 2. TwoAPIs Folder
+
 *This folder includes a flask server application to try to run two API's together. Debugging excersice still need to be done*
 
 3. Codes check
+
 *This folder includes different files, which were used for creating, changing and testing codes*
 ***
 
