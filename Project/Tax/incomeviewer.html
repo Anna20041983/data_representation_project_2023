@@ -1,0 +1,291 @@
+<html>
+    <head>
+        <title>View incomes</title>
+    </head>
+    <body>
+        <h1>Incomes</h1>
+        <div><button id="button-showCreate" onclick="showCreate()">Create an income</button><br/><br/></div>
+        <div>
+            <table border="1" id="incomeTable">
+                <tr>
+                        <th>id</th>
+                        <th>Type</th>
+                        <th>Range</th>
+                        <th>Status</th>
+                        <th>Year</th>
+                        <th>Distribution</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                <tr id="1">
+                    <td>1</td>
+                    <td>something</td>
+                    <td>10 to 10000</td>
+                    <td>something</td>
+                    <td>2018</td>
+                    <td>something</td>
+                    <td><button onclick="showUpdate(this)">update</button></td>
+                    <td><button onclick="doDelete(this)">delete</button></td>
+                   
+            </tr>
+
+        </table>
+        <br/>
+        </div>
+        <div id="createUpdateForm" style="display:none">
+            <!-- spans are like divs but do not go onto a new line -->
+            <h2><span id="createLabel">Create a</span> <span id="updateLabel">Update this</span> Income</h2>
+            id <input type="text" name="id"><br/>
+            Type <input type="text" name="type"><br/>
+            Range <input type="text" name="range"><br/>
+            Status <input type="number" name="status"><br/>
+            Year <input type="number" name="year"><br/>
+            Distribution <input type="text" name="distribution"><br/>
+           
+            <span><button id="button-doCreate" onclick="doCreate()">Create</button></span>
+ 			<span><button id="button-doUpdate" onclick="doUpdate()">Update</button></span>
+             <!-- "display:none" will make it hidden-->
+
+
+        </div>
+        
+    </body>
+    <script>
+        //console.log("hello world")
+        function showCreate(){
+            document.getElementById("createUpdateForm").style.display = "block"
+            
+            document.getElementById("button-doCreate").style.display = "block"
+            document.getElementById("button-doUpdate").style.display = "none"
+            document.getElementById("createLabel").style.display = "inline"
+            document.getElementById("updateLabel").style.display = "none"
+
+            document.getElementById("button-showCreate").style.display = "none"
+            document.getElementById("incomeTable").style.display = "none"
+            
+        }
+        function showUpdate(buttonElement){
+            document.getElementById("createUpdateForm").style.display = "block"
+           
+            document.getElementById("button-doCreate").style.display = "none"
+            document.getElementById("button-doUpdate").style.display = "block"
+            document.getElementById("createLabel").style.display = "none"
+            document.getElementById("updateLabel").style.display = "inline"
+
+            document.getElementById("button-showCreate").style.display = "none"
+            document.getElementById("incomeTable").style.display = "none"
+
+            rowElement= buttonElement.parentNode.parentNode
+            book = getIncomeFromRow(rowElement)
+            //console.log("updating")
+            //console.log(book)
+            populateFormWithIncome(income)
+            
+        }
+        function showViewall(){
+            document.getElementById("createUpdateForm").style.display = "none"
+           
+            document.getElementById("button-showCreate").style.display = "block"
+            document.getElementById("incomeTable").style.display = "block"
+            
+        }
+        function clearForm(){
+            var form = document.getElementById('createUpdateForm')
+
+
+            form.querySelector('input[name="type"]').value=''
+            form.querySelector('input[name="range"]').value=''
+            form.querySelector('input[name="status"]').value=''
+            form.querySelector('input[name="year"]').value=''
+            form.querySelector('input[name="distribution"]').value=''
+        }
+        
+        function getIncomeFromForm(){
+            var form = document.getElementById('createUpdateForm')
+
+       	    var income = {}
+         
+        	income.type = form.querySelector('input[name="type"]').value
+        	income.range = form.querySelector('input[name="range"]').value
+        	income.status = form.querySelector('input[name="status"]').value
+            income.year = form.querySelector('input[name="year"]').value
+            income.distribution = form.querySelector('input[name="distribution"]').value
+        	//console.log(JSON.stringify(book))
+            return income
+        }
+        function populateFormWithIncome(income){
+       		var form = document.getElementById('createUpdateForm')
+        	form.querySelector('input[name="id"]').disabled = true
+       	
+       		form.querySelector('input[name="type"]').value= income.type
+        	form.querySelector('input[name="range"]').value= income.range
+        	form.querySelector('input[name="status"]').value= income.status
+            form.querySelector('input[name="year"]').value= income.year
+            form.querySelector('input[name="distribution"]').value= income.distribution
+    }
+
+
+        function addIncomeToTable(income){
+            var tableElement = document.getElementById('incomeTable')
+            var rowElement = tableElement.insertRow(-1)
+            
+            rowElement.setAttribute('id',income.id)
+            
+            var cell1 = rowElement.insertCell(0);
+            cell1.innerHTML = income.type
+            var cell2 = rowElement.insertCell(1);
+            cell2.innerHTML = income.range
+            var cell3 = rowElement.insertCell(2);
+            cell3.innerHTML = income.status
+            var cell4 = rowElement.insertCell(3);
+            cell4.innerHTML = income.year
+            var cell5 = rowElement.insertCell(4);
+            cell5.innerHTML = income.distribution
+           
+            var cell6 = rowElement.insertCell(5);
+            cell6.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+            var cell7 = rowElement.insertCell(6);
+            cell7.innerHTML = '<button onclick=doDelete(this)>delete</button>'
+
+        }
+        function getIncomeFromRow(rowElement){
+            var income ={}
+        
+            income.type = rowElement.cells[0].firstChild.textContent
+            income.range = rowElement.cells[1].firstChild.textContent
+            income.status = rowElement.cells[2].firstChild.textContent
+            income.year = rowElement.cells[3].firstChild.textContent
+            income.distribution = rowElement.cells[4].firstChild.textContent
+            return income
+        }
+        function setIncomeInRow(rowElement, income){
+              
+            rowElement.cells[0].firstChild.textContent= income.type
+            rowElement.cells[1].firstChild.textContent= income.range
+            rowElement.cells[2].firstChild.textContent= income.status
+            rowElement.cells[3].firstChild.textContent= income.year
+            rowElement.cells[4].firstChild.textContent= income.distribution
+    }
+
+        function doCreate(){
+            console.log("creating an income")
+            income = getIncomeFromForm()
+            console.log(income)
+            addIncomeToTable(income)
+            showViewall()
+            clearForm()
+            createDataAjax(income)
+        }
+        function doUpdate(){
+            income= getIncomeFromForm()
+            //console.log(book)
+            var rowElement = document.getElementById(income.id)
+            setIncomeInRow(rowElement, income)
+
+            showViewall()
+            clearForm()
+            updateDataAjax(income)
+        }
+        function doDelete(buttonElement){
+            console.log("in delete")
+            var tableElement = document.getElementById('incomeTable')
+            var index = buttonElement.parentNode.parentNode.rowIndex;
+            tableElement.deleteRow(index);
+            deleteDataAjax(rowElement.getAttribute("id"));
+
+        }
+        function getAllAjax() {
+            try {
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/api/incomes",
+                    "method": "GET",
+                    "dataType": "JSON",
+                    "success": function (result) {
+                        console.log(result);
+                        for (income of result) {
+                            addIncomeToTable(income);
+                        }
+                    },
+                    "error": function (xhr, status, error) {
+                        console.error("Error fetching data: " + status + " - " + error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
+        }
+
+        function createDataAjax(income) {
+            try {
+                console.log(JSON.stringify(income));
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/api/incomes",
+                    "method": "POST",
+                    "data": JSON.stringify(income),
+                    "dataType": "JSON",
+                    contentType: "application/json; charset=utf-8",
+                    "success": function (result) {
+                        console.log(result);
+                        cso_data.year = result.year;
+                        addIncomeToTable(income);
+                        clearForm();
+                        showViewAll();
+                    },
+                    "error": function (xhr, status, error) {
+                        console.error("Error creating data: " + status + " - " + error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
+        }
+        function updateDataAjax(income){
+            try {
+                console.log(JSON.stringify(income));
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/api/incomes/"+encodeURI(income.id),
+                    "method":"PUT",
+                    "data":JSON.stringify(income),
+                    "dataType": "JSON",
+                    contentType: "application/json; charset=utf-8",
+                    "success":function(result){
+                    console.log(result);
+                      
+                    },
+                    "error":function(xhr,status,error){
+                        console.log("error: "+status+" msg:"+error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
+        }
+
+        function deleteDataAjax(id){
+            try {
+            
+                console.log(JSON.stringify('deleting '+id));
+                $.ajax({
+                    "url": "http://127.0.0.1:5000/api/incomes/"+encodeURI(id),
+                    "method":"DELETE",
+                    "data":"",
+                    "dataType": "JSON",
+                    contentType: "application/json; charset=utf-8",
+                    "success":function(result){
+                        console.log(result);
+                      
+                    },
+                    "error":function(xhr,status,error){
+                        console.log("error: "+status+" msg:"+error);
+                    }
+                });
+            } catch (e) {
+                console.error("An unexpected error occurred: " + e);
+            }
+        }
+        
+
+        getAllAjax();
+        
+    </script>
+</html>

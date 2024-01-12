@@ -1,0 +1,282 @@
+<html>
+    <head>
+        <title>Children and Young People with Disability</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1>Children and Young People with Disability</h1>
+        <div> <button id="showCreateButton" onclick="showCreate()">Create</button></div>
+        <div>
+            <table class="table" id="dataTable">
+                <tr>
+                        <th>Year</th>
+                        <th>Age Group</th>
+                        <th>County</th>
+                        <th>Sex</th>
+                        <th>Type/Severity of Disability</th>
+                        <th>No of Children and Young People with disability</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                <tr>
+                        <td>2014</td>
+                        <td>0 - 4 years</td>
+                        <td>All Counties</td>
+                        <td>Both sexes</td>
+                        <td>All disabilities</td>
+                        <td>0</td>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                <tr>
+                        <td>2014</td>
+                        <td>0 - 17 years</td>
+                        <td>Mayo</td>
+                        <td>Male</td>
+                        <td>Physical disability</td>
+                        <td>12</td>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                
+            </table>
+        </div>
+        <div id='createUpdateForm' style="display: none">
+                <h2><span id="createLabel">Create a</span> <span id="updateLabel">Update this</span> Data</h2>
+                <input type="hidden" name="id"/>
+                Year <input type="text" name="year" /><br/>
+                Age Group <input type="text" name="ageGroup"/> <br/>
+                County <input type="text" name="county"/> <br/>
+                Sex <input type="text" name="sex"/> <br/>
+                Type/Severity of Disability <input type="text" name="type_of_disability"/> <br/>
+                No of Children and Young People with disability <input type="text" name="no_of_children"/> <br/>
+                <span><button id="doCreateButton" onclick="doCreate()">Create</button></span>
+                <span><button id="doUpdateButton" onclick="doUpdate()">Update</button></span>
+        </div>
+    </body>
+    <script>
+    function showCreate(){
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('dataTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('createLabel').style.display="inline"
+        document.getElementById('updateLabel').style.display="none"
+
+        document.getElementById('doCreateButton').style.display="block"
+        document.getElementById('doUpdateButton').style.display="none"
+
+    }
+    function showViewAll(){
+        document.getElementById('showCreateButton').style.display="block"
+        document.getElementById('dataTable').style.display="block"
+        document.getElementById('createUpdateForm').style.display="none"
+    }
+    function showUpdate(buttonElement){
+        document.getElementById('showCreateButton').style.display="none"
+        document.getElementById('dataTable').style.display="none"
+        document.getElementById('createUpdateForm').style.display="block"
+
+        document.getElementById('createLabel').style.display="none"
+        document.getElementById('updateLabel').style.display="inline"
+
+        document.getElementById('doCreateButton').style.display="none"
+        document.getElementById('doUpdateButton').style.display="block"
+
+
+        var rowElement = buttonElement.parentNode.parentNode
+        // these is a way of finding the closest <tr> which would safer, closest()
+        
+        var data = getDataFromRow(rowElement)
+        populateFormWithData(data)
+    }
+    function doCreate(){
+        var form = document.getElementById('createUpdateForm')
+
+        var data = {}
+       
+        data.year = form.querySelector('input[name="year"]').value
+        data.age_group = form.querySelector('input[name="age_group"]').value
+        data.county = form.querySelector('input[name="county"]').value        
+        data.sex = form.querySelector('input[name="sex"]').value
+        data.type_of_disability = form.querySelector('input[name="type_of_disability"]').value
+        data.no_of_children = form.querySelector('input[name="no_of_children"]').value
+        console.log(JSON.stringify(data))
+        createDataAjax(data)
+        
+        
+    }
+    function doUpdate(){
+        var data = getDataFromForm();
+        var rowElement = document.getElementById(data.year);
+        updateDataAjax(data);
+        setDataInRow(rowElement,data);
+       
+        clearForm();
+        showViewAll();
+    }
+    function doDelete(r){
+        var tableElement = document.getElementById('dataTable');
+        var rowElement = r.parentNode.parentNode;
+        var index = rowElement.rowIndex;
+        deleteDataAjax(rowElement.getAttribute("year"));
+        tableElement.deleteRow(index);
+    }
+    function addDataToTable(data){
+        var tableElement = document.getElementById('dataTable')
+        var rowElement = tableElement.insertRow(-1)
+        rowElement.setAttribute('year',data.year)
+        var cell1 = rowElement.insertCell(0);
+        cell1.innerHTML = data.year
+        var cell2 = rowElement.insertCell(1);
+        cell2.innerHTML = data.age_group
+        var cell3 = rowElement.insertCell(2);
+        cell3.innerHTML = data.county
+        var cell4 = rowElement.insertCell(3);
+        cell4.innerHTML = data.sex
+        var cell5 = rowElement.insertCell(4);
+        cell5.innerHTML = data.type_of_disability
+        var cell6 = rowElement.insertCell(5);
+        cell6.innerHTML = data.no_of_children
+        var cell7 = rowElement.insertCell(6);
+        cell7.innerHTML = '<button onclick="showUpdate(this)">Update</button>'
+        var cell8 = rowElement.insertCell(7);
+        cell8.innerHTML = '<button onclick=doDelete(this)>delete</button>'
+
+    }
+
+    function clearForm(){
+        var form = document.getElementById('createUpdateForm')
+
+        form.querySelector('input[name="year"]').value=''
+        form.querySelector('input[name="age_group"]').value=''
+        form.querySelector('input[name="county"]').value=''
+        form.querySelector('input[name="sex"]').value=''
+        form.querySelector('input[name="type_of_disability"]').value=''
+        form.querySelector('input[name="no_of_children"]').value=''
+    }
+    function getDataFromRow(rowElement){
+        var data ={}
+        data.year  = rowElement.getAttribute('year')
+        data.age_group = rowElement.cells[1].firstChild.textContent
+        data.county = rowElement.cells[2].firstChild.textContent
+        data.sex = rowElement.cells[3].firstChild.textContent
+        data.type_of_disability = rowElement.cells[4].firstChild.textContent
+        data.no_of_children = parseInt(rowElement.cells[5].firstChild.textContent,10)
+        return data
+    }
+    function setDataInRow(rowElement, data){
+        rowElement.cells[0].firstChild.textContent= data.year
+        rowElement.cells[1].firstChild.textContent= data.age_group
+        rowElement.cells[2].firstChild.textContent= data.county
+        rowElement.cells[3].firstChild.textContent= data.sex
+        rowElement.cells[3].firstChild.textContent= data.type_of_disability
+        rowElement.cells[3].firstChild.textContent= data.no_of_children
+    }
+    function populateFormWithData(data){
+        var form = document.getElementById('createUpdateForm')
+        form.querySelector('input[name="year"]').disabled = true
+
+        form.querySelector('input[name="year"]').value  = data.year
+        form.querySelector('input[name="age_group"]').value= data.age_group
+        form.querySelector('input[name="county"]').value= data.county
+        form.querySelector('input[name="sex"]').value= data.sex
+        form.querySelector('input[name="type_of_disability"]').value= data.type_of_disability
+        form.querySelector('input[name="no_of_children"]').value= data.no_of_children
+    }
+    function getDataFromForm(){
+        var form = document.getElementById('createUpdateForm')
+        var data = {}
+        data.year= form.querySelector('input[name="year"]').value
+        data.age_group = form.querySelector('input[name="age_group"]').value
+        data.county = form.querySelector('input[name="county"]').value
+        data.sex = form.querySelector('input[name="sex"]').value
+        data.type_of_disability = form.querySelector('input[name="type_of_disability"]').value
+        data.no_of_children = parseInt(form.querySelector('input[name="no_of_children"]').value,10)
+        console.log(JSON.stringify(data))
+        return data
+    }
+    function getAllAjax(){
+        $.ajax({
+            "url": "http://127.0.0.1:5000/data",
+            "method":"GET",
+            "data":"",
+            "dataType": "JSON",
+            "success":function(result){
+                //console.log(result);
+                for (data of result){
+                    addDataToTable(data);
+                }
+                
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+
+    }
+    function createDataAjax(data){
+        //var car = {"reg":"12 D 1234","make":"Fiat","model":"Punto","price":3000}
+        console.log(JSON.stringify(data));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/data",
+            "method":"POST",
+            "data":JSON.stringify(data),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                data.id = result.id
+                addDataToTable(data)
+                clearForm()
+                showViewAll()
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function updateDataAjax(data){
+        //var car = {"reg":"12 D 1234","price":8000}
+        console.log(JSON.stringify(data));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/data/"+encodeURI(data.id),
+            "method":"PUT",
+            "data":JSON.stringify(data),
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+               // console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    function deleteDataAjax(id){
+        
+        //console.log(JSON.stringify('deleting '+id));
+        $.ajax({
+            "url": "http://127.0.0.1:5000/data/"+encodeURI(id),
+            "method":"DELETE",
+            "data":"",
+            "dataType": "JSON",
+            contentType: "application/json; charset=utf-8",
+            "success":function(result){
+                //console.log(result);
+                  
+            },
+            "error":function(xhr,status,error){
+                console.log("error: "+status+" msg:"+error);
+            }
+        });
+    }
+    getAllAjax();
+  
+
+    
+    </script>
+</html>
