@@ -44,9 +44,7 @@ class DataDAO:
         cursor.execute(sql)
         results = cursor.fetchall()
         returnArray = []
-        #print(results)
         for result in results:
-            #print(result)
             returnArray.append(self.convertToDictionary(result))
         
         self.closeAll()
@@ -76,9 +74,7 @@ class DataDAO:
             cursor = self.getcursor()
             sql = "DELETE FROM data WHERE year = %s"
             values = (year,)
-
             cursor.execute(sql, values)
-
             self.connection.commit()
             self.closeAll()
             print("Delete done")

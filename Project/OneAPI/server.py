@@ -5,7 +5,7 @@ from dataDAO import dataDAO
 app = Flask(__name__, template_folder='templates', static_url_path='', static_folder='.')
 CORS(app)  # Enable CORS for all routes
 
-app.secret_key = 'your_secret_key'  # Replace with a secure secret key
+app.secret_key = 'secret_key'  
 
 # Dummy user for demonstration purposes
 dummy_user = {'username': 'demo', 'password': 'password'}
@@ -38,32 +38,28 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-# Failed login route
 @app.route('/failed')
 def failed():
     return render_template('failed.html')
 
-## Correct usage
+# Correct usage
 @app.route('/cso_data')
 def getAll():
     results = dataDAO.getAll()
     return jsonify(results)
 
-    #import pdb; pdb.set_trace()
-#curl "http://127.0.0.1:5000/cso_data/2"
 @app.route('/cso_data/<int:year>')
 def findByYear(year):
     foundData = dataDAO.findByYear(year)
 
     return jsonify(foundData)
-    #import pdb; pdb.set_trace()
-#curl  -i -H "Content-Type:application/json" -X POST -d "{\"title\":\"hello\",\"author\":\"someone\",\"price\":123}" http://127.0.0.1:5000/cso_data
+
 @app.route('/cso_data', methods=['POST'])
 def create():
     try:
         if not request.json:
-            abort(400)
-        # other checking 
+            abort(400) 
+
         cso_data = {
             "year": request.json['year'],
             "sex": request.json['sex'],
@@ -78,9 +74,7 @@ def create():
     except Exception as e:
         print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
-    #import pdb; pdb.set_trace()
 
-#curl  -i -H "Content-Type:application/json" -X PUT -d "{\"title\":\"hello\",\"author\":\"someone\",\"price\":123}" http://127.0.0.1:5000/cso_data/1
 @app.route('/cso_data/<int:year>', methods=['PUT'])
 def update(year):
     print("Updating data for year:", year)
@@ -93,8 +87,6 @@ def update(year):
         if not request.json:
             abort(400)
         reqJson = request.json
-    ##if 'price' in reqJson and type(reqJson['price']) is not int:
-        ##abort(400)
 
         if 'year' in reqJson:
             foundData['year'] = reqJson['year']
@@ -111,27 +103,13 @@ def update(year):
         return jsonify(foundData)
     except Exception as e:
         print("Error:", str(e))
-        return jsonify({"error": str(e)}), 500
-    #import pdb; pdb.set_trace() 
-
-    
+        return jsonify({"error": str(e)}), 500    
 
 @app.route('/cso_data/<int:year>' , methods=['DELETE'])
 def delete(year):
     dataDAO.delete(year)
     
     return jsonify({"done":True})
-    #import pdb; pdb.set_trace()
-
-# Correct usage
-@app.route('/')
-def correct_route():
-    # Create a dictionary or use other serializable data
-    data = {'message': 'This is a JSON-serializable response'}
-
-    # Return the data using jsonify
-    return jsonify(data)
-
 
 if __name__ == '__main__' :
     app.run(debug= True)
