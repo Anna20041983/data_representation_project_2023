@@ -46,6 +46,10 @@ Big Project for Data Representation Module
  - python server.py - to run the application in the development environment on http://127.0.0.1:5000
  - to stop the application use ctrl + C and deactivate.bat
 
+Application can also be run on https://annak83.pythonanywhere.com/ or with a login on: https://annak83.pythonanywhere.com/login (same login details as above)
+
+Github repository for hosting: https://github.com/Anna20041983/deploytopythonanywhere
+
 ***
 
 ## Author
